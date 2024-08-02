@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Project</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }        
+        #project-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.2); /* Transparent background */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            color: #fff; /* Text color */
+        }
+        
+        .project-details {
+            margin-bottom: 20px;
+        }
+        
+        .project-details h2, .project-details p {
+            margin: 0;
+            padding: 0;
+        }
+        
+    </style>
+
+    
+
+</head>
+
+
+<body>
+    
+    <div id="project-container" class="project-container">
+        <h2>Musical Web 2024</h2>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
