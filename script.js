@@ -1,3 +1,8 @@
+import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -34,13 +39,86 @@ const createPointCloud = () => {
 const pointCloud = createPointCloud();
 const originalVertices = pointCloud.geometry.attributes.position.array.slice();
 
-camera.position.z = 15;
+camera.position.z = 50;
+
+const projectData = [
+    {
+        title: "",
+        description: "SFPC and course description"
+    },
+    {
+        title: "Project Title 1",
+        description: "Project description for project 2."
+    },
+    {
+        title: "Project Title 2",
+        description: "Project description for project 2."
+    },
+    {
+        title: "Project Title 3",
+        description: "Project description for project 2."
+    },
+    {
+        title: "Project Title 4",
+        description: "Project description for project 2."
+    },
+    {
+        title: "Project Title 5",
+        description: "Project description for project 2."
+    },
+
+    // Add more projects here
+];
+
+let currentProjectIndex = 0;
+let accumulatedScroll = 0;
+const scrollThreshold = 100; // Adjust this value to control scroll sensitivity
+
+const updateProjectContainer = (index) => {
+    const projectContainer = document.getElementById('project-container');
+    projectContainer.innerHTML = ''; // Clear the container
+
+    const projectDetails = document.createElement('div');
+    projectDetails.className = 'project-details';
+
+    const projectTitle = document.createElement('h2');
+    projectTitle.textContent = projectData[index].title;
+
+    const projectDescription = document.createElement('p');
+    projectDescription.textContent = projectData[index].description;
+
+    projectDetails.appendChild(projectTitle);
+    projectDetails.appendChild(projectDescription);
+    projectContainer.appendChild(projectDetails);
+};
+
+
+updateProjectContainer(currentProjectIndex);
 
 const onMouseWheel = (event) => {
     event.preventDefault();
+    
+    // Accumulate the scroll delta
+    accumulatedScroll += event.deltaY;
+
+    if (Math.abs(accumulatedScroll) >= scrollThreshold) {
+        // Determine scroll direction
+        if (accumulatedScroll > 0) {
+            currentProjectIndex = (currentProjectIndex + 1) % projectData.length;
+        } else {
+            currentProjectIndex = (currentProjectIndex - 1 + projectData.length) % projectData.length;
+        }
+        updateProjectContainer(currentProjectIndex);
+
+
+        accumulatedScroll = 0;
+    }
+
+    // Update camera position of three.js
     camera.position.z += event.deltaY * 0.01;
     camera.position.z = Math.max(1, Math.min(50, camera.position.z));
 };
+
 window.addEventListener('wheel', onMouseWheel);
 
 // Web Audio API setup
@@ -84,37 +162,36 @@ const animate = () => {
 };
 animate();
 
-
-const projectData = [
-    {
-        title: "Project Title 1",
-        description: "Project description for project 1."
+//title stuff
+const create3DText = (text, font) => {
+    const textGeometry = new TextGeometry(text, {
+        font: font,
+        size: 5,
+        height: 1,
+        depth: 0,
+        curveSegments: 12,
+        bevelEnabled: false,
+        bevelThickness: 1,
+        bevelSize: 0.5,
+        bevelOffset: 0,
+        bevelSegments: 0
+    });
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+    
+    textMesh.position.set(-40, 25, 0); // Adjust position to be above project container
+    scene.add(textMesh);
+};
+const loader = new FontLoader();
+loader.load(
+    'mgsfont.json',
+    function (font) {
+        create3DText('Musical Web Summer 2024', font);
     },
-    {
-        title: "Project Title 2",
-        description: "Project description for project 2."
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
     },
-    // Add more projects here
-];
-
-const projectContainer = document.getElementById('project-container');
-
-projectData.forEach(project => {
-    const projectDetails = document.createElement('div');
-    projectDetails.className = 'project-details';
-
-    const projectTitle = document.createElement('h2');
-    projectTitle.textContent = project.title;
-
-    const projectDescription = document.createElement('p');
-    projectDescription.textContent = project.description;
-
-    projectDetails.appendChild(projectTitle);
-    projectDetails.appendChild(projectDescription);
-    projectContainer.appendChild(projectDetails);
-});
-
-
-
-
-
+    function (err) {
+        console.error('An error happened');
+    }
+);
